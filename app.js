@@ -19,7 +19,7 @@ var httpStatus = require('./lib/httpStatus');
 var _ = require('underscore');
 
 app.get(root + 'ping', function(req, res) {
-  res.send('ping');
+  res.send('pong');
 });
 
 var data = {};
@@ -70,7 +70,6 @@ app.delete(root + 'usuarios/:id', function(req, res) {
   err.raise(res, err.OK, 'record successfully deleted');
 });
 
-
 app.findById = function(req, res, data, entityName) {
   var convert = require('./lib/convert');
 
@@ -89,3 +88,5 @@ app.findById = function(req, res, data, entityName) {
 
 app.listen(port);
 console.log('app started, listening on port ' + port);
+
+module.exports = app;
