@@ -1,5 +1,7 @@
+<!DOCTYPE html>
 <html>
   <head>
+    <meta charset='utf8'>
   </head>
   <body>
 
@@ -14,6 +16,8 @@
       <li>get first 3 records: <a href='/api/usuarios?len=3'>/api/usuarios?len=3</a></li>
       <li>get second page of 3 records: <a href='/api/usuarios?page=2&len=3'>/api/usuarios?page=2&amp;len=3</a></li>
       <li>get second page order by age: <a href='/api/usuarios?order=age&page=2&len=3'>/api/usuarios?order=age&amp;page=2&amp;len=3</a></li>
+      <li>get records containing ma: <a href='/api/usuarios?q=ma'>/api/usuarios?q=ma</a></li>
+      <li>get records containing ma in the field nombre: <a href='/api/usuarios?q=ma&fields=nombre'>/api/usuarios?q=ma&amp;fields=nombre</a></li>
     </ul>
 
     <h2>query a specific record</h2>
