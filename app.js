@@ -13,10 +13,10 @@ var root = '/api/';
 var port = 3000;
 
 // utils
-var err = require('./lib/err');
-var db = require('./lib/dbHelper');
+var err        = require('./lib/err');
+var db         = require('./lib/dbHelper');
 var httpStatus = require('./lib/httpStatus');
-var _ = require('lodash');
+var _          = require('lodash');
 
 app.get(root + 'ping', function(req, res) {
   console.log(req.query);
@@ -88,7 +88,7 @@ app.findById = function(req, res, data, entityName) {
   }
 
   return entity;
-}
+};
 
 app.listen(port);
 console.log('app started, listening on port ' + port);
