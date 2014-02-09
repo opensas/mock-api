@@ -98,7 +98,7 @@ app.findById = function(req, res, data, entityName) {
   }
 
   return entity;
-}
+};
 
 app.listen(port);
 console.log('app started, listening on port ' + port);
