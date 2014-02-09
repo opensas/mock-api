@@ -1,3 +1,6 @@
+// attention
+// check http://webapplog.com/express-js-and-mongoose-example-building-hackhall/
+
 var express = require('express');
 var app = express();
 
@@ -13,10 +16,10 @@ var root = '/api/';
 var port = 3000;
 
 // utils
-var err = require('./lib/err');
-var db = require('./lib/dbHelper');
+var err        = require('./lib/err');
+var db         = require('./lib/dbHelper');
 var httpStatus = require('./lib/httpStatus');
-var _ = require('lodash');
+var _          = require('lodash');
 
 app.get(root + 'ping', function(req, res) {
   console.log(req.query);
@@ -27,6 +30,13 @@ var data = {};
 
 // check this: https://npmjs.org/package/readdir
 data.usuarios = require('./data/usuarios/data.js');
+
+app.get(root + 'test/*', function(req, res, next) {
+  // see http://nodejs.org/api/url.html
+  console.log('got it');
+  console.log(req.url);
+  res.json({message: 'got it'});
+});
 
 app.get(root + 'usuarios', function(req, res, next) {
 
