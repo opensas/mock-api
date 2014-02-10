@@ -12,8 +12,10 @@ app.configure(function() {
 });
 
 // config
-var root = '/api/';
 var port = 3000;
+
+var root = '/api/';
+var dataFolder = './data';
 
 // utils
 var err        = require('./lib/err');
@@ -21,8 +23,12 @@ var db         = require('./lib/dbHelper');
 var httpStatus = require('./lib/httpStatus');
 var _          = require('lodash');
 
+var fs         = require('fs');
+var path       = require('path');
+
+var dbFetcher  = require('./lib/dbFetcher');
+
 app.get(root + 'ping', function(req, res) {
-  console.log(req.query);
   res.send('pong');
 });
 
@@ -31,24 +37,55 @@ var data = {};
 // check this: https://npmjs.org/package/readdir
 data.usuarios = require('./data/usuarios/data.js');
 
-app.get(root + 'test/*', function(req, res, next) {
-  // see http://nodejs.org/api/url.html
-  console.log('got it');
-  console.log(req.url);
-  res.json({message: 'got it'});
-});
-
-app.get(root + 'usuarios', function(req, res, next) {
-
-  var result = db.query(data.usuarios, req);
-  res.json(result);
-});
+dbFetcher.urlRoot = root;
+dbFetcher.fsRoot = path.join(__dirname, dataFolder);
 
 app.get(root + 'usuarios/:id', function(req, res) {
 
   var entity = app.findById(req, res, data.usuarios);
 
   res.json(entity);
+});
+
+// app.get(root + '*/:id(\\d+)', function(req, res, next) {
+// app.get('/api/*/\\d+', function(req, res, next) {
+app.get(/\/api\/(.*)\/(\d+)/, function(req, res, next) {
+
+  console.log('fetching by id');
+
+  // get rid of the /id
+  var path = req.path.replace(/\/(\d+)$/, '');
+  var id = req.params[1];
+
+  var data = dbFetcher.fetch(path);
+  if (data===null) err.raise(res, err.NOT_FOUND, 'could not find ' + req.path);
+
+  var entity = app.findById(id, res, data);
+
+  res.json(entity);
+});
+
+app.get(root + '*/count', function(req, res, next) {
+
+  // get rid of the /count
+  var path = req.path.replace(/\/count$/, '');
+
+  var data = dbFetcher.fetch(path);
+  if (data===null) err.raise(res, err.NOT_FOUND, 'could not find ' + req.path);
+
+  var result = db.query(data, req, {len: -1}); // force no pagination
+  res.json(result.length);
+
+});
+
+app.get(root + '*', function(req, res, next) {
+
+  var data = dbFetcher.fetch(req);
+  if (data===null) err.raise(res, err.NOT_FOUND, 'could not find ' + req.path);
+
+  var result = db.query(data, req);
+  res.json(result);
+
 });
 
 app.put(root + 'usuarios/:id', function(req, res) {
@@ -89,7 +126,9 @@ app.findById = function(req, res, data, entityName) {
 
   entityName = entityName || 'record';
 
-  var id = convert.toNumber(req.params.id);
+  var id = req.params ? req.params.id : req;
+  id = convert.toNumber(id);
+
   if (!id) err.raise(res, err.BAD_REQUEST, 'id should be a valid number');
 
   var entity = db.byId(data, id);
