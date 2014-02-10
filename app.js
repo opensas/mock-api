@@ -40,6 +40,20 @@ data.usuarios = require('./data/usuarios/data.js');
 dbFetcher.urlRoot = root;
 dbFetcher.fsRoot = path.join(__dirname, dataFolder);
 
+app.get(root + '*/count', function(req, res, next) {
+
+  // get rid of the /count
+  var path = req.path.replace(/\/count$/, '');
+
+  var data = dbFetcher.fetch(path);
+  if (data===null) err.raise(res, err.NOT_FOUND, 'could not find ' + req.path);
+
+  var result = db.query(data, req, {len: -1}); // force no pagination
+  res.json(result.length);
+
+});
+
+
 app.get(root + 'usuarios/:id', function(req, res) {
 
   var entity = app.findById(req, res, data.usuarios);
@@ -63,19 +77,6 @@ app.get(/\/api\/(.*)\/(\d+)/, function(req, res, next) {
   var entity = app.findById(id, res, data);
 
   res.json(entity);
-});
-
-app.get(root + '*/count', function(req, res, next) {
-
-  // get rid of the /count
-  var path = req.path.replace(/\/count$/, '');
-
-  var data = dbFetcher.fetch(path);
-  if (data===null) err.raise(res, err.NOT_FOUND, 'could not find ' + req.path);
-
-  var result = db.query(data, req, {len: -1}); // force no pagination
-  res.json(result.length);
-
 });
 
 app.get(root + '*', function(req, res, next) {
