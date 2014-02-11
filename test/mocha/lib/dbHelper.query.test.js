@@ -35,8 +35,6 @@ describe('dbHelper module', function() {
 
     it('should return the first "len" elements', function() {
       var data = db.query(original, { len: 3 });
-      console.log('attention!');
-      console.log(data);
       data.should.have.length(3);
       data.should.have.members(original.slice(0,3));
       data.should.eql([
