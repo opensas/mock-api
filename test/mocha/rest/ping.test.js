@@ -1,7 +1,6 @@
 var root = __dirname + '/../../../';
 
 var request = require('supertest');
-var assert = require('assert');
 var should = require('chai').should();
 var app = require(root + 'app');
 
@@ -18,7 +17,6 @@ describe('mock API', function() {
 /*        .end(function(err, res) {
           if (err) return done(err);
           should.not.exist(err);
-          // assert.equal(res.text, 'pong');
           res.text.should.equal('pong');
           done();
         })
