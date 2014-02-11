@@ -1,4 +1,4 @@
-var root = __dirname + '/../../';
+var root = __dirname + '/../../../';
 
 var request = require('supertest');
 var assert = require('assert');
