@@ -2,7 +2,7 @@
 // check http://webapplog.com/express-js-and-mongoose-example-building-hackhall/
 
 var express = require('express');
-var app = express();
+var app     = express();
 
 app.configure(function() {
   app.use(express.static(__dirname + '/public')); // set the static files location /public/img will be /img for users
@@ -11,12 +11,6 @@ app.configure(function() {
   app.use(express.methodOverride());              // simulate DELETE and PUT
 });
 
-// config
-var port = 3000;
-
-var root = '/api/';
-var dataFolder = './data';
-
 // utils
 var err        = require('./lib/err');
 var db         = require('./lib/dbHelper');
@@ -24,9 +18,15 @@ var httpStatus = require('./lib/httpStatus');
 var _          = require('lodash');
 
 var fs         = require('fs');
-var path       = require('path');
+var path       = require('./lib/pathHelper');
 
 var dbFetcher  = require('./lib/dbFetcher');
+
+// config
+var config = require('./config');
+var port        = config.port;
+var root        = path.withSeps(config.apiRoot);
+var dataFolder  = path.withLastSep(config.dataRoot);
 
 app.get(root + 'ping', function(req, res) {
   res.send('pong');
@@ -35,7 +35,7 @@ app.get(root + 'ping', function(req, res) {
 var data = {};
 
 // check this: https://npmjs.org/package/readdir
-data.usuarios = require('./data/usuarios/data.js');
+// data.usuarios = require('./data/usuarios/data.js');
 
 dbFetcher.urlRoot = root;
 dbFetcher.fsRoot = path.join(__dirname, dataFolder);
@@ -54,12 +54,12 @@ app.get(root + '*/count', function(req, res, next) {
 });
 
 
-app.get(root + 'usuarios/:id', function(req, res) {
-
-  var entity = app.findById(req, res, data.usuarios);
-
-  res.json(entity);
-});
+//app.get(root + 'usuarios/:id', function(req, res) {
+//
+//  var entity = app.findById(req, res, data.usuarios);
+//
+//  res.json(entity);
+//});
 
 // app.get(root + '*/:id(\\d+)', function(req, res, next) {
 // app.get('/api/*/\\d+', function(req, res, next) {
@@ -101,26 +101,26 @@ app.put(root + 'usuarios/:id', function(req, res) {
   res.json(entity);
 });
 
-app.post(root + 'usuarios', function(req, res) {
-
-  var id = db.nextId(data.usuarios);  // #todo: return error if not found
-
-  var newEntity = req.body;
-  newEntity.id = id;
-
-  data.usuarios.push(newEntity);
-
-  res.json(httpStatus.CREATED, newEntity);
-});
-
-app.delete(root + 'usuarios/:id', function(req, res) {
-
-  var entity = app.findById(req, res, data.usuarios);
-
-  db.deleteById(data.usuarios, entity.id);
-
-  err.raise(res, err.OK, 'record successfully deleted');
-});
+//app.post(root + 'usuarios', function(req, res) {
+//
+//  var id = db.nextId(data.usuarios);  // #todo: return error if not found
+//
+//  var newEntity = req.body;
+//  newEntity.id = id;
+//
+//  data.usuarios.push(newEntity);
+//
+//  res.json(httpStatus.CREATED, newEntity);
+//});
+//
+//app.delete(root + 'usuarios/:id', function(req, res) {
+//
+//  var entity = app.findById(req, res, data.usuarios);
+//
+//  db.deleteById(data.usuarios, entity.id);
+//
+//  err.raise(res, err.OK, 'record successfully deleted');
+//});
 
 app.findById = function(req, res, data, entityName) {
   var convert = require('./lib/convert');
