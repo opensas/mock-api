@@ -23,6 +23,7 @@ describe('mock API', function() {
     it('should add a new resource', function(done) {
       request(app)
         .post('/api/usuarios')
+        .set('Content-Type', 'application/json')
         .send(newResource)
         .end(function(err, res) {
           if (err) return done(err);          // should.not.exist(err);
@@ -71,6 +72,7 @@ describe('mock API', function() {
     it('should edit the new resource', function(done) {
       request(app)
         .put('/api/usuarios/13')
+        .set('Content-Type', 'application/json')
         .send(existingResource)
         .end(function(err, res) {
           if (err) return done(err);          // should.not.exist(err);
