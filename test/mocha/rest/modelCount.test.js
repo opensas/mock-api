@@ -1,9 +1,9 @@
 var root = __dirname + '/../../../';
 
 var request = require('supertest');
-var assert = require('assert');
-var should = require('chai').should();
-var app = require(root + 'app');
+var assert  = require('assert');
+var should  = require('chai').should();
+var app     = require(root + 'app');
 
 describe('mock API', function() {
   describe('usuarios/count resource', function() {
