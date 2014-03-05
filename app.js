@@ -12,40 +12,49 @@ app.configure(function() {
 });
 
 // utils
-var err        = require('./lib/err');
-var db         = require('./lib/dbHelper');
-var httpStatus = require('./lib/httpStatus');
-var _          = require('lodash');
+var err         = require('./lib/err');
+var db          = require('./lib/dbHelper');
+var httpStatus  = require('./lib/httpStatus');
+var convert     = require('./lib/convert');
 
-var fs         = require('fs');
-var path       = require('./lib/pathHelper');
+var _           = require('lodash');
 
-var dbFetcher  = require('./lib/dbFetcher');
+var fs          = require('fs');
+var path        = require('./lib/pathHelper');
+
+var dbFetcher   = require('./lib/dbFetcher');
 
 // config
-var config = require('./config');
+var config      = require('./config');
 var port        = config.port;
 var root        = path.withSeps(config.apiRoot);
-var dataFolder  = path.withLastSep(config.dataRoot);
+var dataFolder  = path.withLastSep(config.dataFolder);
+var routes      = getRoutes(root);
 
-app.get(root + 'ping', function(req, res) {
+/**
+ * Endpoint to test that the service is running
+ * 
+ * Example: /api/ping
+ */
+app.get(routes.ping, function(req, res) {
   res.send('pong');
 });
 
 var data = {};
 
-// check this: https://npmjs.org/package/readdir
-// data.usuarios = require('./data/usuarios/data.js');
+dbFetcher.dataFolder = path.join(__dirname, dataFolder);
 
-dbFetcher.urlRoot = root;
-dbFetcher.fsRoot = path.join(__dirname, dataFolder);
+/**
+ * Endpoint to get the total number of resources
+ * 
+ * Accepts filters and conditions
+ * 
+ * Example: /api/usuarios/count?q=j
+ */
+app.get(routes.count, function(req, res, next) {
 
-app.get(root + '*/count', function(req, res, next) {
-
-  // get rid of the /count
-  var path = req.path.replace(/\/count$/, '');
-
-  var data = dbFetcher.fetch(path);
+  var resource = req.params[0];
+  var data = dbFetcher.fetch(resource);
   if (data===null) err.raise(res, err.NOT_FOUND, 'could not find ' + req.path);
 
   var result = db.query(data, req, {len: -1}); // force no pagination
@@ -53,94 +62,128 @@ app.get(root + '*/count', function(req, res, next) {
 
 });
 
+/**
+ * Endpoint to get a specific resource by id
+ * 
+ * Example: /api/usuarios/23
+ * 
+ * It uses the following regular expression \/api\/(.*)\/(\d+)
+ */
+app.get(routes.byId, function(req, res, next) {
 
-//app.get(root + 'usuarios/:id', function(req, res) {
-//
-//  var entity = app.findById(req, res, data.usuarios);
-//
-//  res.json(entity);
-//});
-
-// app.get(root + '*/:id(\\d+)', function(req, res, next) {
-// app.get('/api/*/\\d+', function(req, res, next) {
-app.get(/\/api\/(.*)\/(\d+)/, function(req, res, next) {
-
-  console.log('fetching by id');
-
-  // get rid of the /id
-  var path = req.path.replace(/\/(\d+)$/, '');
+  var resources = req.params[0];
   var id = req.params[1];
 
-  var data = dbFetcher.fetch(path);
+  var data = dbFetcher.fetch(resources);
   if (data===null) err.raise(res, err.NOT_FOUND, 'could not find ' + req.path);
 
-  var entity = app.findById(id, res, data);
+  var entity = db.byId(data, convert.toNumber(id));
+  if (entity===null) err.raise(res, err.NOT_FOUND, 'could not find resource ' + resources + ' with id ' + id);
 
   res.json(entity);
 });
 
-app.get(root + '*', function(req, res, next) {
+/**
+ * Endpoint to get a list of resources
+ * 
+ * Accepts filters, conditions, sort and pagination
+ * 
+ * Example: /api/usuarios?
+ *          order=nombre&sort=desc&q=a&fields=nombre&len=3&page=1
+ */
+app.get(routes.resources, function(req, res, next) {
 
-  var data = dbFetcher.fetch(req);
-  if (data===null) err.raise(res, err.NOT_FOUND, 'could not find ' + req.path);
+  var resource = req.params[0];
+  var data = dbFetcher.fetch(resource);
+  if (data===null) err.raise(res, err.NOT_FOUND, 'could not find ' + resource + ' resource');
 
   var result = db.query(data, req);
   res.json(result);
-
 });
 
-app.put(root + 'usuarios/:id', function(req, res) {
+/**
+ * Endpoint to modify a resource
+ */
+app.put(routes.byId, function(req, res, next) {
 
-  var entity = app.findById(req, res, data.usuarios);
+  var resources = req.params[0];
+  var id = req.params[1];
+
+  var data = dbFetcher.fetch(resources);
+  if (data===null) err.raise(res, err.NOT_FOUND, 'could not find ' + req.path);
+  
+  var entity = db.byId(data, convert.toNumber(id));
+  if (entity===null) err.raise(res, err.NOT_FOUND, 'could not find resource ' + resources + ' with id ' + id);
 
   var updateEntity = req.body;
-  delete updateEntity.id;         // prevent id from being modified
+  delete updateEntity.id;            // prevent id from being modified
 
-  _.extend(entity, updateEntity);    // WARNING: modifying data.usuarios
+  _.extend(entity, updateEntity);    // WARNING: modifying data!!!
 
   res.json(entity);
 });
 
-//app.post(root + 'usuarios', function(req, res) {
-//
-//  var id = db.nextId(data.usuarios);  // #todo: return error if not found
-//
-//  var newEntity = req.body;
-//  newEntity.id = id;
-//
-//  data.usuarios.push(newEntity);
-//
-//  res.json(httpStatus.CREATED, newEntity);
-//});
-//
-//app.delete(root + 'usuarios/:id', function(req, res) {
-//
-//  var entity = app.findById(req, res, data.usuarios);
-//
-//  db.deleteById(data.usuarios, entity.id);
-//
-//  err.raise(res, err.OK, 'record successfully deleted');
-//});
+/**
+ * Endpoint to create a new resource
+ */
+app.post(routes.resources, function(req, res, next) {
+  var resources = req.params[0];
 
-app.findById = function(req, res, data, entityName) {
-  var convert = require('./lib/convert');
+  var data = dbFetcher.fetch(resources);
+  if (data===null) err.raise(res, err.NOT_FOUND, 'could not find resource ' + resources);
 
-  entityName = entityName || 'record';
+  var newEntity = _.extend({}, req.body, {id: db.nextId(data) });
 
-  var id = req.params ? req.params.id : req;
-  id = convert.toNumber(id);
+  data.push(newEntity);
 
-  if (!id) err.raise(res, err.BAD_REQUEST, 'id should be a valid number');
+  res.json(httpStatus.CREATED, newEntity);
+});
 
-  var entity = db.byId(data, id);
-  if (!entity) {
-    err.raise(res, err.NOT_FOUND, 'could not find ' + entityName + ' with id ' + id.toString());
-  }
+/**
+ * Endpoint to delete a resource
+ */
+app.delete(routes.byId, function(req, res, next) {
 
-  return entity;
-};
+  var resources = req.params[0];
+  var id = req.params[1];
 
+  var data = dbFetcher.fetch(resources);
+  if (data===null) err.raise(res, err.NOT_FOUND, 'could not find ' + req.path);
+  
+  var entity = db.byId(data, convert.toNumber(id));
+  if (entity===null) err.raise(res, err.NOT_FOUND, 'could not find resource ' + resources + ' with id ' + id);
+
+  db.deleteById(data, entity.id);
+
+  err.raise(res, err.OK, 'record successfully deleted');
+});
+
+function getRoutes(root) {
+ // regular expression: /\/api\/
+  var rootRegExp = root.replace(/\//g, '\\/'); // escape slashes
+
+ // regular expression: /\/api\/ping
+  var pingRegExp = rootRegExp + 'ping'; // ping
+
+ // regular expression: /\/api\/(.*)
+  var resourcesRegExp = rootRegExp + '(.*)'; // the resource path
+
+ // regular expression: /\/api\/(.*)\/(\d+)
+  var byIdRegExp = resourcesRegExp + '\\/(\\d+)';
+
+ // regular expression: /\/api\/(.*)\/count
+  var countRegExp = resourcesRegExp + '\\/count';
+
+  return {
+    ping      : new RegExp(pingRegExp),
+    resources : new RegExp(resourcesRegExp),
+    byId      : new RegExp(byIdRegExp),
+    count     : new RegExp(countRegExp)
+  };
+
+}
 app.listen(port);
 console.log('app started, listening on port ' + port);
 
 module.exports = app;
+
