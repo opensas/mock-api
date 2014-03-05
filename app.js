@@ -33,7 +33,7 @@ var routes      = getRoutes(root);
 
 /**
  * Endpoint to test that the service is running
- * 
+ *
  * Example: /api/ping
  */
 app.get(routes.ping, function(req, res) {
@@ -46,9 +46,9 @@ dbFetcher.dataFolder = path.join(__dirname, dataFolder);
 
 /**
  * Endpoint to get the total number of resources
- * 
+ *
  * Accepts filters and conditions
- * 
+ *
  * Example: /api/usuarios/count?q=j
  */
 app.get(routes.count, function(req, res, next) {
@@ -64,9 +64,9 @@ app.get(routes.count, function(req, res, next) {
 
 /**
  * Endpoint to get a specific resource by id
- * 
+ *
  * Example: /api/usuarios/23
- * 
+ *
  * It uses the following regular expression \/api\/(.*)\/(\d+)
  */
 app.get(routes.byId, function(req, res, next) {
@@ -85,9 +85,9 @@ app.get(routes.byId, function(req, res, next) {
 
 /**
  * Endpoint to get a list of resources
- * 
+ *
  * Accepts filters, conditions, sort and pagination
- * 
+ *
  * Example: /api/usuarios?
  *          order=nombre&sort=desc&q=a&fields=nombre&len=3&page=1
  */
@@ -111,7 +111,7 @@ app.put(routes.byId, function(req, res, next) {
 
   var data = dbFetcher.fetch(resources);
   if (data===null) err.raise(res, err.NOT_FOUND, 'could not find ' + req.path);
-  
+
   var entity = db.byId(data, convert.toNumber(id));
   if (entity===null) err.raise(res, err.NOT_FOUND, 'could not find resource ' + resources + ' with id ' + id);
 
@@ -149,7 +149,7 @@ app.delete(routes.byId, function(req, res, next) {
 
   var data = dbFetcher.fetch(resources);
   if (data===null) err.raise(res, err.NOT_FOUND, 'could not find ' + req.path);
-  
+
   var entity = db.byId(data, convert.toNumber(id));
   if (entity===null) err.raise(res, err.NOT_FOUND, 'could not find resource ' + resources + ' with id ' + id);
 
