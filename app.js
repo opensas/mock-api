@@ -20,15 +20,16 @@ var convert     = require('./lib/convert');
 var _           = require('lodash');
 
 var fs          = require('fs');
-var path        = require('./lib/pathHelper');
+var path        = require('path');
+var string      = require('./lib/stringHelper');
 
 var dbFetcher   = require('./lib/dbFetcher');
 
 // config
 var config      = require('./config');
 var port        = config.port;
-var root        = path.withSeps(config.apiRoot);
-var dataFolder  = path.withLastSep(config.dataFolder);
+var root        = string.withPrefix(config.apiRoot, '/', '/');
+var dataFolder  = string.withSufix(config.dataFolder, path.sep);
 var routes      = getRoutes(root);
 
 /**
