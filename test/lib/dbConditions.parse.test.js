@@ -1,8 +1,8 @@
 // mocha test
-var root  = __dirname + '/../../../';
+var root  = __dirname + '/../../';
 var _     = require('lodash');
 
-var db  = require(root + 'lib/dbConditions');
+var db  = require(root + 'lib/db/dbConditions');
 var op  = db._operators;
 
 var should = require('chai').should();

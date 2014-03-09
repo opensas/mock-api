@@ -1,6 +1,6 @@
 // mocha test
 var root = __dirname + '/../../';
-var db = require(root + 'lib/dbHelper');
+var db = require(root + 'lib/db/dbHelper');
 
 var _ = require('lodash');
 
@@ -11,13 +11,13 @@ describe('dbHelper module', function() {
   describe('dbHelper.query', function() {
 
     var original = [
-      { name: 'ernesto', age: 30 },
-      { name: 'carlos', age: 20 },
-      { name: 'fidel', age: 60 },
-      { name: 'abel', age: 10 },
-      { name: 'daniel', age: 50 },
-      { name: 'braulio', age: 40 },
-      { name: 'gerardo', age: 70 }
+      { name: 'e', age: 30 },
+      { name: 'c', age: 20 },
+      { name: 'f', age: 60 },
+      { name: 'a', age: 10 },
+      { name: 'd', age: 50 },
+      { name: 'b', age: 40 },
+      { name: 'g', age: 70 }
     ];
 
     var copy = _.cloneDeep(original);
@@ -38,9 +38,9 @@ describe('dbHelper module', function() {
       data.should.have.length(3);
       data.should.have.members(original.slice(0,3));
       data.should.eql([
-        { name: 'ernesto', age: 30 },
-        { name: 'carlos', age: 20 },
-        { name: 'fidel', age: 60 },
+        { name: 'e', age: 30 },
+        { name: 'c', age: 20 },
+        { name: 'f', age: 60 },
       ]);
       // original[0].name = 'modified';   // just to test that touching original fails tests
     });
@@ -48,16 +48,16 @@ describe('dbHelper module', function() {
     it('should return the first element when len equals 1', function() {
       var data = db.query(original, { len: 1 });
       data.should.have.length(1);
-      data.should.eql([{ name: 'ernesto', age: 30 }]);
+      data.should.eql([{ name: 'e', age: 30 }]);
     });
 
     it('should return the first "len" elements ordered by age', function() {
       var data = db.query(original, { order: 'age', len: 3 });
       data.should.have.length(3);
       data.should.eql([
-        { name: 'abel', age: 10 },
-        { name: 'carlos', age: 20 },
-        { name: 'ernesto', age: 30 }
+        { name: 'a', age: 10 },
+        { name: 'c', age: 20 },
+        { name: 'e', age: 30 }
       ]);
     });
 
@@ -65,9 +65,9 @@ describe('dbHelper module', function() {
       var data = db.query(original, { order: 'age', sort: 'desc', len: 3 });
       data.should.have.length(3);
       data.should.eql([
-        { name: 'gerardo', age: 70 },
-        { name: 'fidel', age: 60 },
-        { name: 'daniel', age: 50 }
+        { name: 'g', age: 70 },
+        { name: 'f', age: 60 },
+        { name: 'd', age: 50 }
       ]);
     });
 
@@ -75,9 +75,9 @@ describe('dbHelper module', function() {
       var data = db.query(original, { len: 3, page: 2 });
       data.should.have.length(3);
       data.should.eql([
-        { name: 'abel', age: 10 },
-        { name: 'daniel', age: 50 },
-        { name: 'braulio', age: 40 }
+        { name: 'a', age: 10 },
+        { name: 'd', age: 50 },
+        { name: 'b', age: 40 }
       ]);
     });
 
@@ -85,7 +85,7 @@ describe('dbHelper module', function() {
       var data = db.query(original, { len: 3, page: 3 });
       data.should.have.length(1);
       data.should.eql([
-        { name: 'gerardo', age: 70 }
+        { name: 'g', age: 70 }
       ]);
     });
 
@@ -99,19 +99,9 @@ describe('dbHelper module', function() {
       var data = db.query(original, { order: 'name', sort: 'desc', len: 3, page: 2 });
       data.should.have.length(3);
       data.should.eql([
-        { name: 'daniel', age: 50 },
-        { name: 'carlos', age: 20 },
-        { name: 'braulio', age: 40 }
-      ]);
-    });
-
-    it('should filter and then sort', function() {
-      var data = db.query(original, { order: 'name', sort: 'desc', q: 'el' });
-      data.should.have.length(3);
-      data.should.eql([
-        { name: 'fidel', age: 60 },
-        { name: 'daniel', age: 50 },
-        { name: 'abel', age: 10 }
+        { name: 'd', age: 50 },
+        { name: 'c', age: 20 },
+        { name: 'b', age: 40 }
       ]);
     });
 
@@ -119,9 +109,9 @@ describe('dbHelper module', function() {
       var data = db.query(original, { query: { order: 'name', sort: 'desc', len: 3, page: 2 } });
       data.should.have.length(3);
       data.should.eql([
-        { name: 'daniel', age: 50 },
-        { name: 'carlos', age: 20 },
-        { name: 'braulio', age: 40 }
+        { name: 'd', age: 50 },
+        { name: 'c', age: 20 },
+        { name: 'b', age: 40 }
       ]);
     });
 

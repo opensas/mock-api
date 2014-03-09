@@ -1,6 +1,6 @@
 // mocha test
 var root = __dirname + '/../../';
-var convert = require(root + 'lib/convert');
+var convert = require(root + 'lib/utils/convert');
 
 var assert = require('assert');
 describe('convert module', function() {

@@ -1,11 +1,11 @@
-var root = __dirname + '/../../../';
+var root = __dirname + '/../../';
 
 var request = require('supertest');
 var assert  = require('assert');
 var should  = require('chai').should();
 var app     = require(root + 'app');
 
-var httpStatus = require(root + 'lib/httpStatus');
+var httpStatus = require(root + 'lib/web/httpStatus');
 
 describe('mock API', function() {
   describe('usuarios resource', function() {

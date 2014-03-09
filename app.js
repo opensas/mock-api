@@ -12,24 +12,25 @@ app.configure(function() {
 });
 
 // utils
-var err         = require('./lib/err');
-var db          = require('./lib/dbHelper');
-var httpStatus  = require('./lib/httpStatus');
-var convert     = require('./lib/convert');
+var err         = require('./lib/web/err');
+var httpStatus  = require('./lib/web/httpStatus');
 
 var _           = require('lodash');
 
 var fs          = require('fs');
 var path        = require('path');
-var string      = require('./lib/stringHelper');
 
-var dbFetcher   = require('./lib/dbFetcher');
+var string      = require('./lib/utils/stringHelper');
+var convert     = require('./lib/utils/convert');
+
+var dbFetcher   = require('./lib/db/dbFetcher');
+var db          = require('./lib/db/dbHelper');
 
 // config
 var config      = require('./config');
 var port        = config.port;
 var root        = string.withPrefix(config.apiRoot, '/', '/');
-var dataFolder  = string.withSufix(config.dataFolder, path.sep);
+var dataFolder  = string.withSuffix(config.dataFolder, path.sep);
 var routes      = getRoutes(root);
 
 /**
@@ -56,7 +57,7 @@ app.get(routes.count, function(req, res, next) {
 
   var resource = req.params[0];
   var data = dbFetcher.fetch(resource);
-  if (data===null) err.raise(res, err.NOT_FOUND, 'could not find ' + req.path);
+  if (data===null) err.raise(res, err.NOT_FOUND, 'could not find ' + resource + ' resource');
 
   var result = db.query(data, req, {len: -1}); // force no pagination
   res.json(result.length);
