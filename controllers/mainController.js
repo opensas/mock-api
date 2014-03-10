@@ -42,7 +42,6 @@ var initController = function(app, config) {
 
     var result = db.query(data, req, {len: -1}); // force no pagination
     res.json(result.length);
-
   });
 
   /**
@@ -110,6 +109,7 @@ var initController = function(app, config) {
    * Endpoint to create a new resource
    */
   app.post(routes.resources, function(req, res, next) {
+
     var resources = req.params[0];
 
     var data = dbFetcher.fetch(resources);
@@ -165,7 +165,6 @@ function getRoutes(root) {
     byId      : new RegExp(byIdRegExp),
     count     : new RegExp(countRegExp)
   };
-
 };
 
 module.exports = initController;

@@ -5,7 +5,7 @@ var express = require('express');
 var app     = express();
 
 // config
-var config      = require('./config');
+var config      = require('./lib/utils/config');
 
 app.configure(function() {
   app.use(express.static(__dirname + '/public')); // set the static files location /public/img will be /img for users
