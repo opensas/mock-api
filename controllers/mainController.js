@@ -57,10 +57,10 @@ var initController = function(app, config) {
     var id = req.params[1];
 
     var data = dbFetcher.fetch(resources);
-    if (data===null) err.raise(res, err.NOT_FOUND, 'could not find ' + req.path);
+    if (data===null) return err.raise(res, err.NOT_FOUND, 'could not find ' + req.path);
 
     var entity = db.byId(data, id);
-    if (entity===null) err.raise(res, err.NOT_FOUND, 'could not find resource ' + resources + ' with id ' + id);
+    if (entity===null) return err.raise(res, err.NOT_FOUND, 'could not find resource ' + resources + ' with id ' + id);
 
     res.json(entity);
   });
@@ -119,7 +119,7 @@ var initController = function(app, config) {
 
     data.push(newEntity);
 
-    res.json(httpStatus.CREATED, newEntity);
+    res.status(httpStatus.CREATED).json(newEntity);
   });
 
   /**
