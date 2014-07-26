@@ -1,0 +1,14 @@
+[
+  { "id": 1,    "nombre": "juan",       "apellido": "mango",      "edad": 22, "tipo": { "id": 1, "nombre": "cliente"} },
+  { "id": 2,    "nombre": "abel",       "apellido": "sanchez",    "edad": 23, "tipo": { "id": 2, "nombre": "amigo"} },
+  { "id": 3,    "nombre": "jose",       "apellido": "perez",      "edad": 43, "tipo": { "id": 1, "nombre": "cliente"} },
+  { "id": 4,    "nombre": "julio",      "apellido": "fanon",      "edad": 59, "tipo": { "id": 2, "nombre": "amigo"} },
+  { "id": 5,    "nombre": "julian",     "apellido": "castro",     "edad": 28, "tipo": { "id": 1, "nombre": "cliente"} },
+  { "id": 6,    "nombre": "fidel",      "apellido": "ramirez",    "edad": 13, "tipo": { "id": 3, "nombre": "familiar"} },
+  { "id": 7,    "nombre": "carlos",     "apellido": "casullo",    "edad": 29, "tipo": { "id": 4, "nombre": "conocido"} },
+  { "id": 8,    "nombre": "rodolfo",    "apellido": "gonzalez",   "edad": 62, "tipo": { "id": 3, "nombre": "familiar"} },
+  { "id": 9,    "nombre": "jorge",      "apellido": "alsina",     "edad": 83, "tipo": { "id": 4, "nombre": "conocido"} },
+  { "id": 10,   "nombre": "pablo",      "apellido": "rivadavia",  "edad": 53, "tipo": { "id": 4, "nombre": "conocido"} },
+  { "id": 11,   "nombre": "matias",     "apellido": "orondo",     "edad": 93, "tipo": { "id": 2, "nombre": "amigo"} },
+  { "id": 12,   "nombre": "ernesto",    "apellido": "riglos",     "edad": 77, "tipo": { "id": 1, "nombre": "cliente"} }
+]
