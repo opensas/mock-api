@@ -38,7 +38,7 @@ var initController = function(app, config) {
 
     var resource = req.params[0];
     var data = dbFetcher.fetch(resource);
-    if (data===null) err.raise(res, err.NOT_FOUND, 'could not find ' + resource + ' resource');
+    if (data===null) return err.raise(res, err.NOT_FOUND, 'could not find ' + resource + ' resource');
 
     var result = db.query(data, req, {len: -1}); // force no pagination
     res.json(result.length);
@@ -77,7 +77,7 @@ var initController = function(app, config) {
 
     var resource = req.params[0];
     var data = dbFetcher.fetch(resource);
-    if (data===null) err.raise(res, err.NOT_FOUND, 'could not find ' + resource + ' resource');
+    if (data===null) return err.raise(res, err.NOT_FOUND, 'could not find ' + resource + ' resource');
 
     var result = db.query(data, req);
     res.json(result);
@@ -92,10 +92,10 @@ var initController = function(app, config) {
     var id = req.params[1];
 
     var data = dbFetcher.fetch(resources);
-    if (data===null) err.raise(res, err.NOT_FOUND, 'could not find ' + req.path);
+    if (data===null) return err.raise(res, err.NOT_FOUND, 'could not find ' + req.path);
 
     var entity = db.byId(data, id);
-    if (entity===null) err.raise(res, err.NOT_FOUND, 'could not find resource ' + resources + ' with id ' + id);
+    if (entity===null) return err.raise(res, err.NOT_FOUND, 'could not find resource ' + resources + ' with id ' + id);
 
     var updateEntity = req.body;
     delete updateEntity.id;            // prevent id from being modified
@@ -113,7 +113,7 @@ var initController = function(app, config) {
     var resources = req.params[0];
 
     var data = dbFetcher.fetch(resources);
-    if (data===null) err.raise(res, err.NOT_FOUND, 'could not find resource ' + resources);
+    if (data===null) return err.raise(res, err.NOT_FOUND, 'could not find resource ' + resources);
 
     var newEntity = _.extend({}, req.body, {id: db.nextId(data) });
 
@@ -131,10 +131,10 @@ var initController = function(app, config) {
     var id = req.params[1];
 
     var data = dbFetcher.fetch(resources);
-    if (data===null) err.raise(res, err.NOT_FOUND, 'could not find ' + req.path);
+    if (data===null) return err.raise(res, err.NOT_FOUND, 'could not find ' + req.path);
 
     var entity = db.byId(data, id);
-    if (entity===null) err.raise(res, err.NOT_FOUND, 'could not find resource ' + resources + ' with id ' + id);
+    if (entity===null) return err.raise(res, err.NOT_FOUND, 'could not find resource ' + resources + ' with id ' + id);
 
     db.deleteById(data, entity.id);
 
