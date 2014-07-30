@@ -10,5 +10,5 @@
   { "id": 9,    "nombre": "jorge",      "apellido": "alsina",     "edad": 83 },
   { "id": 10,   "nombre": "pablo",      "apellido": "rivadavia",  "edad": 53 },
   { "id": 11,   "nombre": "matias",     "apellido": "orondo",     "edad": 93 },
-  { "id": 12,   "nombre": "ernesto",    "apellido": "riglos",     "edad": 77 }
+  { "id": 12,   "nombre": "ernesto",    "apellido": "riglos",     "edad": 17 }
 ]
